@@ -706,6 +706,11 @@ public final class PyCommon {
     return convertedFiles;
   }
 
+  public boolean buildPythonZip() {
+    return (ruleContext.attributes().get("build_zip", Type.BOOLEAN)
+           || ruleContext.getFragment(PythonConfiguration.class).buildPythonZip());
+  }
+
   public void initBinary(List<Artifact> srcs) {
     Preconditions.checkNotNull(version);
 
@@ -720,7 +725,7 @@ public final class PyCommon {
     NestedSetBuilder<Artifact> filesToBuildBuilder =
         NestedSetBuilder.<Artifact>stableOrder().addAll(srcs).add(executable);
 
-    if (ruleContext.getFragment(PythonConfiguration.class).buildPythonZip()) {
+    if (this.buildPythonZip()) {
       filesToBuildBuilder.add(getPythonZipArtifact(executable));
     } else if (OS.getCurrent() == OS.WINDOWS) {
       // TODO(bazel-team): Here we should check target platform instead of using OS.getCurrent().

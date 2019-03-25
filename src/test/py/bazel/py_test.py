@@ -115,5 +115,39 @@ class TestInitPyFiles(test_base.TestBase):
         os.path.exists('bazel-bin/src/a/a.runfiles/__main__/src/a/__init__.py'))
 
 
+class TestZipPyFiles(test_base.TestBase):
+
+  def createSimpleFiles(self, create_init=True):
+    self.ScratchFile('WORKSPACE')
+
+    self.ScratchFile('src/a/BUILD', [
+        'py_binary(name="a", srcs=["a.py"], build_zip=True)'
+    ])
+
+    self.ScratchFile('src/a/a.py', [
+        'print("Hello, World")',
+    ])
+
+    self.ScratchFile('src/b/BUILD', [
+        'py_binary(name="b", srcs=["b.py"], build_zip=False)'
+    ])
+
+    self.ScratchFile('src/b/b.py', [
+        'print("Hello, World")',
+    ])
+
+  def testZipCreated(self):
+    self.createSimpleFiles()
+    exit_code, _, stderr = self.RunBazel(['build', '//src/a:a'])
+    self.AssertExitCode(exit_code, 0, stderr)
+    self.assertTrue(os.path.exists('bazel-bin/src/a/a.zip'))
+  
+  def testZipNotCreated(self):
+    self.createSimpleFiles()
+    exit_code, _, stderr = self.RunBazel(['build', '//src/b:b'])
+    self.AssertExitCode(exit_code, 0, stderr)
+    self.assertFalse(os.path.exists('bazel-bin/src/b/b.zip'))
+
+
 if __name__ == '__main__':
   unittest.main()

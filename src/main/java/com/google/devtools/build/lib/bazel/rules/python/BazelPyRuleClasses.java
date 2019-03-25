@@ -234,6 +234,10 @@ public final class BazelPyRuleClasses {
           <code>srcs</code> of Python targets as required.
           <!-- #END_BLAZE_RULE.ATTRIBUTE --> */
           .add(attr("legacy_create_init", BOOLEAN).value(true))
+          /* <!-- #BLAZE_RULE($base_py_binary).ATTRIBUTE(build_zip) -->
+          Whether to build an executable zip file by default.
+          <!-- #END_BLAZE_RULE.ATTRIBUTE --> */
+          .add(attr("build_zip", BOOLEAN).value(false))
           /* <!-- #BLAZE_RULE($base_py_binary).ATTRIBUTE(stamp) -->
           Enable link stamping.
           Whether to encode build information into the binary. Possible values:
